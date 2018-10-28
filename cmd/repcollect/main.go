@@ -1,4 +1,3 @@
-
 /*
 Here will be a description of the tools
 */
@@ -6,10 +5,10 @@ Here will be a description of the tools
 package main
 
 import (
-  "fmt"
-  "net/http"
+	"fmt"
+	"net/http"
 )
 
-func main () {
-  fmt.Println("skeleton")
+func main() {
+	fmt.Println("skeleton")
 }
