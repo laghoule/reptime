@@ -6,13 +6,13 @@ package corelibs
 
 import (
 	"fmt"
-  "log"
-  "io/ioutil"
-  "net/http"
+	"io/ioutil"
+	"log"
+	"net/http"
 )
 
 func GetBody(target string) string {
-	fmt.Printf("My target %s", target)
+	fmt.Printf("My target: %s\n", target)
 
 	res, err := http.Get(target)
 	if err != nil {
@@ -25,5 +25,5 @@ func GetBody(target string) string {
 		log.Fatal(err)
 	}
 
-  return string(body)
+	return string(body)
 }
