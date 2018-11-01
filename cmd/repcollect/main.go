@@ -12,7 +12,7 @@ import (
 func main() {
 	// cmdline args
 	// countPtr := flag.Uint("count", 10, "Number of request to do")
-	targetPtr := flag.String("target", "http://www.example.com", "Endpoint target")
+	targetPtr := flag.String("target", "https://www.example.com", "Endpoint target")
 	verbosePtr := flag.Bool("verbose", true, "Enable verbose mode")
 	flag.Parse()
 
