@@ -16,6 +16,6 @@ func main() {
 	verbosePtr := flag.Bool("verbose", true, "Enable verbose mode")
 	flag.Parse()
 
-	// Call the target and get reponse time to stdout
+	// Call the target and get response time to stdout
 	corelibs.GetBobyResponseTime(*targetPtr, *verbosePtr)
 }
