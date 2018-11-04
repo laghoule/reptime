@@ -65,7 +65,6 @@ func getMeanTimes(metrics []httpstat.Result) {
 	meanMetrics.TLSHandshake = time.Duration(int(meanMetrics.TLSHandshake)/len(metrics))
 	meanMetrics.ServerProcessing = time.Duration(int(meanMetrics.ServerProcessing)/len(metrics))
 	
-
 	fmt.Println("Mean time:")
 	printMetrics(meanMetrics)
 }
