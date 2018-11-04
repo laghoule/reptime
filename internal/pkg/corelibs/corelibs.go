@@ -88,7 +88,6 @@ func getBobyResponseTime(target string, verbose bool) httpstat.Result {
 	}
 
 	// Create a httpstat powered context
-	// TODO: change result for metric
 	var result httpstat.Result
 	ctx := httpstat.WithHTTPStat(req.Context(), &result)
 	req = req.WithContext(ctx)
