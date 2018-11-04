@@ -12,22 +12,32 @@ import (
 	"time"
 )
 
-// GetBody connect to the http/https target, get the body response, and return
-// the result as the return
-func GetBody(target string) string {
-	res, err := http.Get(target)
-	if err != nil {
-		log.Fatal(err)
-	}
+//var httpInterface interface {
+//	GetMeanTimes()
+//}
 
-	// Read the body of the request, and close the connection
-	body, err := ioutil.ReadAll(res.Body)
-	defer res.Body.Close()
-	if err != nil {
-		log.Fatal(err)
-	}
+// httpMetric is the metrics
+type httpMetric struct {
+	nsLookup         time.Duration
+	tcpConnection    time.Duration
+	tlsHandshake     time.Duration
+	serverProcessing time.Duration
+	contentTransfer  time.Duration
+	totalTime        time.Duration
+}
 
-	return string(body)
+// httpstatConvert convert httpstat to httpMetrics
+func httpstatConvert(result httpstat.Result) httpMetric {
+	var metrics httpMetric
+
+	metrics.nsLookup = result.DNSLookup
+	metrics.tcpConnection = result.TCPConnection
+	metrics.tlsHandshake = result.TLSHandshake
+	metrics.serverProcessing = result.ServerProcessing
+	metrics.contentTransfer = result.ContentTransfer(time.Now())
+	metrics.totalTime = result.Total(time.Now())
+
+	return metrics
 }
 
 // GetMetrics call getBodyResponse and call getMeanTimes for getting average
@@ -35,36 +45,37 @@ func GetBody(target string) string {
 func GetMetrics(target string, count uint, verbose bool) {
 
 	// Slice of the metrics, will have len of `count`
-	var metrics []httpstat.Result
+	var metric []httpMetric
 
 	for i := 0; i < int(count); i++ {
-		metrics = append(metrics, getBobyResponseTime(target, verbose))
+		metric = append(metric, httpstatConvert(getBobyResponseTime(target, verbose)))
 	}
 
-	// Work in progress
-	// Will return mean time in httpstat.Result type
-	getMeanTimes(metrics)
+	// Only print to STDOUT for now
+	getMeanTimes(metric)
 }
 
 // getMeanTimes collect metrics and return average response times
-// Remove the highest and lowest value of each dataset (for more acuracy?)
-func getMeanTimes(metrics []httpstat.Result) {
+func getMeanTimes(metrics []httpMetric) {
 
-	var meanMetrics	httpstat.Result
+	var meanMetrics httpMetric
 
 	for _, metric := range metrics {
-		meanMetrics.DNSLookup += metric.DNSLookup
-		meanMetrics.TCPConnection += metric.TCPConnection
-		meanMetrics.TLSHandshake += metric.TLSHandshake
-		meanMetrics.ServerProcessing += metric.ServerProcessing
-		//meanMetrics.Total += (metric.DNSLookup + metric.TCPConnection + metric.TLSHandshake + metric.ServerProcessing)
+		meanMetrics.nsLookup += metric.nsLookup
+		meanMetrics.tcpConnection += metric.tcpConnection
+		meanMetrics.tlsHandshake += metric.tlsHandshake
+		meanMetrics.serverProcessing += metric.serverProcessing
+		meanMetrics.contentTransfer += metric.contentTransfer
+		meanMetrics.totalTime += metric.totalTime
 	}
-	
-	meanMetrics.DNSLookup = time.Duration(int(meanMetrics.DNSLookup)/len(metrics))
-	meanMetrics.TCPConnection = time.Duration(int(meanMetrics.TCPConnection)/len(metrics))
-	meanMetrics.TLSHandshake = time.Duration(int(meanMetrics.TLSHandshake)/len(metrics))
-	meanMetrics.ServerProcessing = time.Duration(int(meanMetrics.ServerProcessing)/len(metrics))
-	
+
+	meanMetrics.nsLookup = time.Duration(int(meanMetrics.nsLookup) / len(metrics))
+	meanMetrics.tcpConnection = time.Duration(int(meanMetrics.tcpConnection) / len(metrics))
+	meanMetrics.tlsHandshake = time.Duration(int(meanMetrics.tlsHandshake) / len(metrics))
+	meanMetrics.serverProcessing = time.Duration(int(meanMetrics.serverProcessing) / len(metrics))
+	meanMetrics.contentTransfer = time.Duration(int(meanMetrics.contentTransfer) / len(metrics))
+	meanMetrics.totalTime = time.Duration(int(meanMetrics.totalTime) / len(metrics))
+
 	fmt.Println("Mean time:")
 	printMetrics(meanMetrics)
 }
@@ -98,20 +109,20 @@ func getBobyResponseTime(target string, verbose bool) httpstat.Result {
 	}
 	defer res.Body.Close()
 
-	// If verbose flag, we output to STDOUT
+	// If verbose flag, we output to STDOUT, but we need to convert result
 	if verbose {
-		printMetrics(result)
+		printMetrics(httpstatConvert(result))
 	}
 
 	return result
 }
 
 // printMetrics output metrics to STDOUT
-func printMetrics(metric httpstat.Result) {
-	total := metric.DNSLookup + metric.TCPConnection + metric.TLSHandshake + metric.ServerProcessing
-	fmt.Printf("DNS lookup: %d ms\n", int(metric.DNSLookup/time.Millisecond))
-	fmt.Printf("TCP connection: %d ms\n", int(metric.TCPConnection/time.Millisecond))
-	fmt.Printf("TLS handshake: %d ms\n", int(metric.TLSHandshake/time.Millisecond))
-	fmt.Printf("Server processing: %d ms\n", int(metric.ServerProcessing/time.Millisecond))
-	fmt.Printf("Total: %d ms\n\n", total/time.Millisecond)
+func printMetrics(metric httpMetric) {
+	fmt.Printf("DNS lookup: %d ms\n", int(metric.nsLookup/time.Millisecond))
+	fmt.Printf("TCP connection: %d ms\n", int(metric.tcpConnection/time.Millisecond))
+	fmt.Printf("TLS handshake: %d ms\n", int(metric.tlsHandshake/time.Millisecond))
+	fmt.Printf("Server processing: %d ms\n", int(metric.serverProcessing/time.Millisecond))
+	fmt.Printf("Content transfer: %d ms\n", int(metric.contentTransfer/time.Millisecond))
+	fmt.Printf("Total processing: %d ms\n\n", int(metric.totalTime/time.Millisecond))
 }
