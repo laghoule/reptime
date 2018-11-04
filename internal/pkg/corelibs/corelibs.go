@@ -1,5 +1,3 @@
-// Here will be a description of the libs
-
 package corelibs
 
 import (
@@ -12,12 +10,8 @@ import (
 	"time"
 )
 
-//type httpInterface interface {
-//	GetMeanTimes()
-//}
-
-// httpMetric is the metrics
-type httpMetric struct {
+// HTTPMetric is the metrics
+type HTTPMetric struct {
 	nsLookup         time.Duration
 	tcpConnection    time.Duration
 	tlsHandshake     time.Duration
@@ -26,9 +20,9 @@ type httpMetric struct {
 	totalTime        time.Duration
 }
 
-// httpstatConvert convert httpstat to httpMetrics
-func httpstatConvert(result httpstat.Result) httpMetric {
-	var metric httpMetric
+// httpstatConvert convert httpstat to HTTPMetric
+func httpstatConvert(result httpstat.Result) HTTPMetric {
+	var metric HTTPMetric
 
 	metric.nsLookup = result.DNSLookup
 	metric.tcpConnection = result.TCPConnection
@@ -42,23 +36,22 @@ func httpstatConvert(result httpstat.Result) httpMetric {
 
 // GetMetrics call getBodyResponse and call getMeanTimes for getting average
 // response time
-func GetMetrics(target string, count uint, verbose bool) {
+func GetMetrics(target string, count uint, verbose bool) HTTPMetric {
 
 	// Slice of the metrics, will have len of `count`
-	var metric []httpMetric
+	var metric []HTTPMetric
 
 	for i := 0; i < int(count); i++ {
 		metric = append(metric, httpstatConvert(getBobyResponseTime(target, verbose)))
 	}
 
-	// Only print to STDOUT for now
-	getMeanTimes(metric)
+	return getMeanTimes(metric, verbose)
 }
 
 // getMeanTimes collect metrics and return average response times
-func getMeanTimes(metrics []httpMetric) {
+func getMeanTimes(metrics []HTTPMetric, verbose bool) HTTPMetric {
 
-	var meanMetric httpMetric
+	var meanMetric HTTPMetric
 
 	for _, metric := range metrics {
 		meanMetric.nsLookup += metric.nsLookup
@@ -76,8 +69,12 @@ func getMeanTimes(metrics []httpMetric) {
 	meanMetric.contentTransfer = time.Duration(int(meanMetric.contentTransfer) / len(metrics))
 	meanMetric.totalTime = time.Duration(int(meanMetric.totalTime) / len(metrics))
 
-	fmt.Println("Mean time:")
-	printMetric(meanMetric)
+	if verbose {
+		fmt.Println("Mean time:")
+		printMetric(meanMetric)
+	}
+
+	return meanMetric
 }
 
 // getBobyResponseTime connect to http/https target and give response time
@@ -118,7 +115,7 @@ func getBobyResponseTime(target string, verbose bool) httpstat.Result {
 }
 
 // printMetric output metrics to STDOUT
-func printMetric(metric httpMetric) {
+func printMetric(metric HTTPMetric) {
 	fmt.Printf("DNS lookup: %d ms\n", int(metric.nsLookup/time.Millisecond))
 	fmt.Printf("TCP connection: %d ms\n", int(metric.tcpConnection/time.Millisecond))
 	fmt.Printf("TLS handshake: %d ms\n", int(metric.tlsHandshake/time.Millisecond))
