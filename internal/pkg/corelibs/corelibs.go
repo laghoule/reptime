@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-//var httpInterface interface {
+//type httpInterface interface {
 //	GetMeanTimes()
 //}
 
@@ -28,16 +28,16 @@ type httpMetric struct {
 
 // httpstatConvert convert httpstat to httpMetrics
 func httpstatConvert(result httpstat.Result) httpMetric {
-	var metrics httpMetric
+	var metric httpMetric
 
-	metrics.nsLookup = result.DNSLookup
-	metrics.tcpConnection = result.TCPConnection
-	metrics.tlsHandshake = result.TLSHandshake
-	metrics.serverProcessing = result.ServerProcessing
-	metrics.contentTransfer = result.ContentTransfer(time.Now())
-	metrics.totalTime = result.Total(time.Now())
+	metric.nsLookup = result.DNSLookup
+	metric.tcpConnection = result.TCPConnection
+	metric.tlsHandshake = result.TLSHandshake
+	metric.serverProcessing = result.ServerProcessing
+	metric.contentTransfer = result.ContentTransfer(time.Now())
+	metric.totalTime = result.Total(time.Now())
 
-	return metrics
+	return metric
 }
 
 // GetMetrics call getBodyResponse and call getMeanTimes for getting average
@@ -58,26 +58,26 @@ func GetMetrics(target string, count uint, verbose bool) {
 // getMeanTimes collect metrics and return average response times
 func getMeanTimes(metrics []httpMetric) {
 
-	var meanMetrics httpMetric
+	var meanMetric httpMetric
 
 	for _, metric := range metrics {
-		meanMetrics.nsLookup += metric.nsLookup
-		meanMetrics.tcpConnection += metric.tcpConnection
-		meanMetrics.tlsHandshake += metric.tlsHandshake
-		meanMetrics.serverProcessing += metric.serverProcessing
-		meanMetrics.contentTransfer += metric.contentTransfer
-		meanMetrics.totalTime += metric.totalTime
+		meanMetric.nsLookup += metric.nsLookup
+		meanMetric.tcpConnection += metric.tcpConnection
+		meanMetric.tlsHandshake += metric.tlsHandshake
+		meanMetric.serverProcessing += metric.serverProcessing
+		meanMetric.contentTransfer += metric.contentTransfer
+		meanMetric.totalTime += metric.totalTime
 	}
 
-	meanMetrics.nsLookup = time.Duration(int(meanMetrics.nsLookup) / len(metrics))
-	meanMetrics.tcpConnection = time.Duration(int(meanMetrics.tcpConnection) / len(metrics))
-	meanMetrics.tlsHandshake = time.Duration(int(meanMetrics.tlsHandshake) / len(metrics))
-	meanMetrics.serverProcessing = time.Duration(int(meanMetrics.serverProcessing) / len(metrics))
-	meanMetrics.contentTransfer = time.Duration(int(meanMetrics.contentTransfer) / len(metrics))
-	meanMetrics.totalTime = time.Duration(int(meanMetrics.totalTime) / len(metrics))
+	meanMetric.nsLookup = time.Duration(int(meanMetric.nsLookup) / len(metrics))
+	meanMetric.tcpConnection = time.Duration(int(meanMetric.tcpConnection) / len(metrics))
+	meanMetric.tlsHandshake = time.Duration(int(meanMetric.tlsHandshake) / len(metrics))
+	meanMetric.serverProcessing = time.Duration(int(meanMetric.serverProcessing) / len(metrics))
+	meanMetric.contentTransfer = time.Duration(int(meanMetric.contentTransfer) / len(metrics))
+	meanMetric.totalTime = time.Duration(int(meanMetric.totalTime) / len(metrics))
 
 	fmt.Println("Mean time:")
-	printMetrics(meanMetrics)
+	printMetric(meanMetric)
 }
 
 // getBobyResponseTime connect to http/https target and give response time
@@ -111,14 +111,14 @@ func getBobyResponseTime(target string, verbose bool) httpstat.Result {
 
 	// If verbose flag, we output to STDOUT, but we need to convert result
 	if verbose {
-		printMetrics(httpstatConvert(result))
+		printMetric(httpstatConvert(result))
 	}
 
 	return result
 }
 
-// printMetrics output metrics to STDOUT
-func printMetrics(metric httpMetric) {
+// printMetric output metrics to STDOUT
+func printMetric(metric httpMetric) {
 	fmt.Printf("DNS lookup: %d ms\n", int(metric.nsLookup/time.Millisecond))
 	fmt.Printf("TCP connection: %d ms\n", int(metric.tcpConnection/time.Millisecond))
 	fmt.Printf("TLS handshake: %d ms\n", int(metric.tlsHandshake/time.Millisecond))
