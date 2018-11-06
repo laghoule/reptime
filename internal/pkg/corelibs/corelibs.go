@@ -38,43 +38,48 @@ func httpstatConvert(result httpstat.Result) HTTPMetric {
 // response time
 func GetMetrics(target string, count uint, verbose bool) HTTPMetric {
 
-	// Slice of the metrics, will have len of `count`
-	var metric []HTTPMetric
-
-	for i := 0; i < int(count); i++ {
-		metric = append(metric, httpstatConvert(getBobyResponseTime(target, verbose)))
-	}
-
-	return getMeanTimes(metric, verbose)
-}
-
-// getMeanTimes collect metrics and return average response times
-func getMeanTimes(metrics []HTTPMetric, verbose bool) HTTPMetric {
-
+	// metric is a function closure
+	metric := getMeanTimes()
 	var meanMetric HTTPMetric
 
-	for _, metric := range metrics {
-		meanMetric.nsLookup += metric.nsLookup
-		meanMetric.tcpConnection += metric.tcpConnection
-		meanMetric.tlsHandshake += metric.tlsHandshake
-		meanMetric.serverProcessing += metric.serverProcessing
-		meanMetric.contentTransfer += metric.contentTransfer
-		meanMetric.totalTime += metric.totalTime
+	for i := 0; i < int(count); i++ {
+		meanMetric = metric(httpstatConvert(getBobyResponseTime(target, verbose)))
 	}
-
-	meanMetric.nsLookup = time.Duration(int(meanMetric.nsLookup) / len(metrics))
-	meanMetric.tcpConnection = time.Duration(int(meanMetric.tcpConnection) / len(metrics))
-	meanMetric.tlsHandshake = time.Duration(int(meanMetric.tlsHandshake) / len(metrics))
-	meanMetric.serverProcessing = time.Duration(int(meanMetric.serverProcessing) / len(metrics))
-	meanMetric.contentTransfer = time.Duration(int(meanMetric.contentTransfer) / len(metrics))
-	meanMetric.totalTime = time.Duration(int(meanMetric.totalTime) / len(metrics))
 
 	if verbose {
 		fmt.Println("Mean time:")
 		printMetric(meanMetric)
-	}
+	}	
 
 	return meanMetric
+}
+
+// getMeanTimes collect metric and return average response times (function closure)
+func getMeanTimes() func (HTTPMetric) HTTPMetric {
+
+	var countMetric HTTPMetric
+	var meanMetric HTTPMetric
+	var itemCount int
+
+	return func (metric HTTPMetric) HTTPMetric {
+		itemCount++
+
+		countMetric.nsLookup += metric.nsLookup
+		countMetric.tcpConnection += metric.tcpConnection
+		countMetric.tlsHandshake += metric.tlsHandshake
+		countMetric.serverProcessing += metric.serverProcessing
+		countMetric.contentTransfer += metric.contentTransfer
+		countMetric.totalTime += metric.totalTime
+
+		meanMetric.nsLookup = time.Duration(int(countMetric.nsLookup) / itemCount)
+		meanMetric.tcpConnection = time.Duration(int(countMetric.tcpConnection) / itemCount)
+		meanMetric.tlsHandshake = time.Duration(int(countMetric.tlsHandshake) / itemCount)
+		meanMetric.serverProcessing = time.Duration(int(countMetric.serverProcessing) / itemCount)
+		meanMetric.contentTransfer = time.Duration(int(countMetric.contentTransfer) / itemCount)
+		meanMetric.totalTime = time.Duration(int(countMetric.totalTime) / itemCount)
+
+		return meanMetric
+	}
 }
 
 // getBobyResponseTime connect to http/https target and give response time
