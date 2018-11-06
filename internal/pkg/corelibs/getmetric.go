@@ -10,16 +10,6 @@ import (
 	"time"
 )
 
-// HTTPMetric is the metric we collect from target
-type HTTPMetric struct {
-	nsLookup         time.Duration
-	tcpConnection    time.Duration
-	tlsHandshake     time.Duration
-	serverProcessing time.Duration
-	contentTransfer  time.Duration
-	totalTime        time.Duration
-}
-
 // httpstatConvert convert httpstat to HTTPMetric
 func httpstatConvert(result httpstat.Result) HTTPMetric {
 	var metric HTTPMetric
