@@ -49,19 +49,19 @@ func GetMetrics(target string, count uint, verbose bool) HTTPMetric {
 	if verbose {
 		fmt.Println("Mean time:")
 		printMetric(meanMetric)
-	}	
+	}
 
 	return meanMetric
 }
 
 // getMeanTimes collect metric and return average response times (function closure)
-func getMeanTimes() func (HTTPMetric) HTTPMetric {
+func getMeanTimes() func(HTTPMetric) HTTPMetric {
 
 	var countMetric HTTPMetric
 	var meanMetric HTTPMetric
 	var itemCount int
 
-	return func (metric HTTPMetric) HTTPMetric {
+	return func(metric HTTPMetric) HTTPMetric {
 		itemCount++
 
 		countMetric.nsLookup += metric.nsLookup
