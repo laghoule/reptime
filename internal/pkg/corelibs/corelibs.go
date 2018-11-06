@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-// HTTPMetric is the metrics
+// HTTPMetric is the metric we collect from target
 type HTTPMetric struct {
 	nsLookup         time.Duration
 	tcpConnection    time.Duration
