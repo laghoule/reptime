@@ -6,7 +6,7 @@
 # Prerequisites
 * Access to an Kubernetes cluster for deploying theses componant
   * Reppush
-  * InfluxDB (not needed if you provide yourn own)
+  * InfluxDB (not needed if you provide your own)
   * Grafana (not needed if you provide your own)
 * AWS account with access to
   * IAM (create a app account and a role for the app)
