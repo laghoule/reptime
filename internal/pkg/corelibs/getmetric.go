@@ -26,7 +26,7 @@ func httpstatConvert(result httpstat.Result) HTTPMetric {
 
 // GetMetrics call getBodyResponse and call getMeanTimes for getting average
 // response time
-func GetMetrics(target string, count uint, verbose bool) HTTPMetric {
+func GetMetrics(target string, count int, verbose bool) HTTPMetric {
 
 	// metric is a function closure
 	metric := getMeanTimes()
@@ -114,6 +114,7 @@ func printMetric(metric HTTPMetric) {
 	fmt.Printf("TCP connection: %d ms\n", int(metric.tcpConnection/time.Millisecond))
 	fmt.Printf("TLS handshake: %d ms\n", int(metric.tlsHandshake/time.Millisecond))
 	fmt.Printf("Server processing: %d ms\n", int(metric.serverProcessing/time.Millisecond))
+	// Content and total is bugged for now
 	fmt.Printf("Content transfer: %d ms\n", int(metric.contentTransfer/time.Millisecond))
 	fmt.Printf("Total processing: %d ms\n\n", int(metric.totalTime/time.Millisecond))
 }
