@@ -15,18 +15,18 @@ type HTTPMetric struct {
 }
 
 // Creds and info for AWS connection and services
-type awsConfig struct {
-	accessKey string
-	secretKey string
-	region 		string
-	queueURL 	string
+type AwsConfig struct {
+	AccessKey string
+	SecretKey string
+	Region 		string
+	QueueURL 	string
 }
 
 // Config struct 
 type Config struct {
-	target 		[]string
-	protocol 	string
-	count 		uint8
-	timeout 	uint8
-	awsConfig
+	Targets 	[]string
+	Protocol 	string
+	Count 		int
+	Timeout 	int
+	AwsConfig
 }
