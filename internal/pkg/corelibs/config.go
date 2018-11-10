@@ -3,6 +3,7 @@ package corelibs
 import (
 	"fmt"
 	"os"
+	"strings"
 	"gopkg.in/ini.v1"
 )
 
@@ -20,14 +21,14 @@ func LoadConfig(configFile string) Config {
 	//fmt.Println("App Mode:", cfg.Section("").Key("app_mode").String())
 	//fmt.Println("Data Path:", cfg.Section("paths").Key("data").String())
 	
-	config.accessKey = cfgfile.Section("aws").Key("access_key").String()
-	config.secretKey = cfgfile.Section("aws").Key("secret_key").String()
-	config.region = cfgfile.Section("aws").Key("region").String()
-	config.queueURL = cfgfile.Section("aws").Key("queue_url").String()
-	//config.target = cfgfile.Section("repcollect").Key("target").String()
-	//config.protocol = cfgfile.Section("repcollect").Key("protocol").Int()
-	//config.count = cfgfile.Section("repcollect").Key("count").Int()
-	//config.timeout = cfgfile.Section("repcollect").Key("timeout").Int()
+	config.AccessKey = cfgfile.Section("aws").Key("access_key").String()
+	config.SecretKey = cfgfile.Section("aws").Key("secret_key").String()
+	config.Region = cfgfile.Section("aws").Key("region").String()
+	config.QueueURL = cfgfile.Section("aws").Key("queue_url").String()
+	config.Targets = strings.Fields(cfgfile.Section("repcollect").Key("target").Value())
+	config.Protocol = cfgfile.Section("repcollect").Key("protocol").String()
+	config.Count, _ = cfgfile.Section("repcollect").Key("count").Int()
+	config.Timeout, _ = cfgfile.Section("repcollect").Key("timeout").Int()
 
 	return config
 }
