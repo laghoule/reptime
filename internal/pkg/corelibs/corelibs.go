@@ -14,7 +14,7 @@ type HTTPMetric struct {
 	totalTime        time.Duration
 }
 
-// Creds and info for AWS connection and services
+// AwsConfig contain creds and info for AWS
 type AwsConfig struct {
 	AccessKey string
 	SecretKey string
