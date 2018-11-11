@@ -98,7 +98,8 @@ func getBobyResponseTime(target string, verbose bool) httpstat.Result {
 	if _, err := io.Copy(ioutil.Discard, res.Body); err != nil {
 		log.Fatal(err)
 	}
-	defer res.Body.Close()
+	res.Body.Close()
+	result.End(time.Now())
 
 	// If verbose flag, we output to STDOUT, but we need to convert result
 	if verbose {
@@ -114,7 +115,6 @@ func printMetric(metric HTTPMetric) {
 	fmt.Printf("TCP connection: %d ms\n", int(metric.tcpConnection/time.Millisecond))
 	fmt.Printf("TLS handshake: %d ms\n", int(metric.tlsHandshake/time.Millisecond))
 	fmt.Printf("Server processing: %d ms\n", int(metric.serverProcessing/time.Millisecond))
-	// Content and total is bugged for now
 	fmt.Printf("Content transfer: %d ms\n", int(metric.contentTransfer/time.Millisecond))
 	fmt.Printf("Total processing: %d ms\n\n", int(metric.totalTime/time.Millisecond))
 }
