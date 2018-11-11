@@ -16,7 +16,7 @@ func main() {
 	flag.Parse()
 
 	// Call the target and get response time to stdout
-	config := corelibs.LoadConfig(*configFilePtr)
+	config := LoadConfig(*configFilePtr)
 	for _, target := range config.Targets {
 		corelibs.GetMetrics(config.Protocol+"://"+target, config.Count, *verbosePtr)
 	}
