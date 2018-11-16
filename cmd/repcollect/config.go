@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gopkg.in/ini.v1"
 	"os"
+	"log"
 	"strings"
 )
 
@@ -12,12 +13,47 @@ type LoadConfigError struct {
 	filename string
 	section  string
 	key      string
+	reason   string
 }
 
 // Error handler
 func (err *LoadConfigError) Error() string {
-	return fmt.Sprintf("Error loading configuration file %s (section: %s | key: %s)", err.filename, err.section, err.key)
+	return fmt.Sprintf("Error in configuration file %s (section: %s | key: %s)\n%s", err.filename, err.section, err.key, err.reason)
 }
+
+// validateConfig check for the integrity of the parsed configuration
+func (config *Config) validateConfig(configFile string) error {
+
+	if len(config.AccessKey) == 0 {
+		return &LoadConfigError{configFile, "aws", "access_key", "Must not be empty"}
+	}
+
+	if len(config.SecretKey) == 0 {
+		return &LoadConfigError{configFile, "aws", "secret_key", "Must not be empty"}
+	}
+
+	if len(config.QueueURL) == 0 {
+		return &LoadConfigError{configFile, "aws", "queue_url", "Must not be empty"}
+	}
+
+	if len(config.Targets) == 0 {
+		return &LoadConfigError{configFile, "repcollect", "target", "Must not be empty"}
+	}
+
+	if config.Protocol != "http" && config.Protocol != "https" {
+		return &LoadConfigError{configFile, "repcollect", "protocol", "Must be http or https"}
+	}
+
+	if config.Count < 1 || config.Count > 60 {
+		return &LoadConfigError{configFile, "repcollect", "count", "Must be between 1 and 60"}
+	}
+
+	if config.Timeout < 1 || config.Count > 30 {
+		return &LoadConfigError{configFile, "repcollect", "count", "Must be between 1 and 30"}
+	}
+
+	return nil
+} 
 
 // LoadConfig from configuration file
 func LoadConfig(configFile string) Config {
@@ -38,6 +74,10 @@ func LoadConfig(configFile string) Config {
 	config.Protocol = cfgfile.Section("repcollect").Key("protocol").MustString("https")
 	config.Count = cfgfile.Section("repcollect").Key("count").MustInt(5)
 	config.Timeout = cfgfile.Section("repcollect").Key("timeout").MustInt(5)
+
+	if err := config.validateConfig(configFile); err != nil {
+		log.Fatal(err)
+	}
 
 	return config
 }
