@@ -65,7 +65,6 @@ func LoadConfig(configFile string) Config {
 		os.Exit(1)
 	}
 
-	// TODO: Add config checker
 	config.AccessKey = cfgfile.Section("aws").Key("access_key").String()
 	config.SecretKey = cfgfile.Section("aws").Key("secret_key").String()
 	config.Region = cfgfile.Section("aws").Key("region").MustString("us-east-1")
