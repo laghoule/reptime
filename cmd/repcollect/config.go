@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"gopkg.in/ini.v1"
-	"os"
 	"log"
+	"os"
 	"strings"
 )
 
@@ -53,7 +53,7 @@ func (config *Config) validateConfig(configFile string) error {
 	}
 
 	return nil
-} 
+}
 
 // LoadConfig from configuration file
 func LoadConfig(configFile string) Config {
