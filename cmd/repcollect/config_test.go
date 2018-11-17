@@ -8,7 +8,7 @@ import (
 // TestLoadConfig verify the functionality of the LoadConfig() func
 func TestLoadConfig(t *testing.T) {
 
-	configTemplate := Config{
+	configTemplate := RepcollectConfig{
 		Targets: []string{"www.example.com"},
 		Protocol: "https", 
 		Count: 5, 

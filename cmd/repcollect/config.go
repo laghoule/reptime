@@ -22,7 +22,7 @@ func (err *LoadConfigError) Error() string {
 }
 
 // validateConfig check for the integrity of the parsed configuration
-func (config *Config) validateConfig(configFile string) error {
+func (config *RepcollectConfig) validateConfig(configFile string) error {
 
 	if len(config.AccessKey) == 0 {
 		return &LoadConfigError{configFile, "aws", "access_key", "Must not be empty"}
@@ -56,8 +56,8 @@ func (config *Config) validateConfig(configFile string) error {
 }
 
 // LoadConfig from configuration file
-func LoadConfig(configFile string) Config {
-	var config Config
+func LoadConfig(configFile string) RepcollectConfig {
+	var config RepcollectConfig
 
 	cfgfile, err := ini.Load(configFile)
 	if err != nil {

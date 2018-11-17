@@ -8,8 +8,8 @@ type AwsConfig struct {
 	QueueURL  string
 }
 
-// Config struct
-type Config struct {
+// RepcollectConfig struct
+type RepcollectConfig struct {
 	Targets  []string
 	Protocol string
 	Count    int
