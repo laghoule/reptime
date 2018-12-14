@@ -21,4 +21,5 @@ func main() {
 		corelibs.GetMetrics(config.Protocol+"://"+target, config.Count, *verbosePtr)
 	}
 
+	corelibs.CreateSQSQueue()
 }
