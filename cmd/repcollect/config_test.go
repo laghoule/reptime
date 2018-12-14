@@ -9,15 +9,15 @@ import (
 func TestLoadConfig(t *testing.T) {
 
 	configTemplate := RepcollectConfig{
-		Targets: []string{"www.example.com"},
-		Protocol: "https", 
-		Count: 5, 
-		Timeout: 5,
-		AwsConfig: AwsConfig {
-			AccessKey: "mykey", 
-			SecretKey: "mysecretkey", 
-			Region: "myregion", 
-			QueueURL: "myqueueurl",
+		Targets:  []string{"www.example.com"},
+		Protocol: "https",
+		Count:    5,
+		Timeout:  5,
+		AwsConfig: AwsConfig{
+			AccessKey: "mykey",
+			SecretKey: "mysecretkey",
+			Region:    "myregion",
+			QueueURL:  "myqueueurl",
 		},
 	}
 
