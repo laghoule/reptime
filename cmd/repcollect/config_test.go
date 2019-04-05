@@ -9,7 +9,7 @@ import (
 func TestLoadConfig(t *testing.T) {
 
 	configTemplate := RepcollectConfig{
-		Targets:  []string{"www.example.com"},
+		Targets:  []string{"www.example.com", "www.examples.com"},
 		Protocol: "https",
 		Count:    1,
 		Interval: 1,

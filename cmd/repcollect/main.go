@@ -21,8 +21,7 @@ func main() {
 	config := LoadConfig(*configFilePtr)
 	for _, target := range config.Targets {
 		metrics = corelibs.GetMetrics(config.Protocol+"://"+target, config.Count, config.Interval, *verbosePtr)
+		corelibs.SendToQueue(metrics, config.QueueURL)
 	}
 
-	//fmt.Println(metrics)
-	corelibs.SendToQueue(metrics, "https://sqs.us-east-1.amazonaws.com/356482799996/Pgauthier_SQS_QUEUE")
 }
