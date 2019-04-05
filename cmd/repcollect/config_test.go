@@ -11,7 +11,8 @@ func TestLoadConfig(t *testing.T) {
 	configTemplate := RepcollectConfig{
 		Targets:  []string{"www.example.com"},
 		Protocol: "https",
-		Count:    5,
+		Count:    1,
+		Interval: 1,
 		Timeout:  5,
 		AwsConfig: AwsConfig{
 			AccessKey: "mykey",
@@ -21,8 +22,8 @@ func TestLoadConfig(t *testing.T) {
 		},
 	}
 
-	// Need to remove hardcoded config file
-	config := LoadConfig("/etc/reptime/repcollect.conf")
+	// Load testdata config
+	config := LoadConfig("testdata/repcollect.conf")
 
 	// https://golang.org/pkg/reflect/#DeepEqual
 	if reflect.DeepEqual(config, configTemplate) == false {

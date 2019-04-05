@@ -13,6 +13,7 @@ type RepcollectConfig struct {
 	Targets  []string
 	Protocol string
 	Count    int
+	Interval int
 	Timeout  int
 	AwsConfig
 }

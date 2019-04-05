@@ -48,6 +48,10 @@ func (config *RepcollectConfig) validateConfig(configFile string) error {
 		return &LoadConfigError{configFile, "repcollect", "count", "Must be between 1 and 60"}
 	}
 
+	if config.Interval < 1 || config.Count > 60 {
+		return &LoadConfigError{configFile, "repcollect", "interval", "Must be between 1 and 60"}
+	}	
+
 	if config.Timeout < 1 || config.Count > 30 {
 		return &LoadConfigError{configFile, "repcollect", "count", "Must be between 1 and 30"}
 	}
@@ -72,6 +76,7 @@ func LoadConfig(configFile string) RepcollectConfig {
 	config.Targets = strings.Fields(cfgfile.Section("repcollect").Key("target").Value())
 	config.Protocol = cfgfile.Section("repcollect").Key("protocol").MustString("https")
 	config.Count = cfgfile.Section("repcollect").Key("count").MustInt(5)
+	config.Interval = cfgfile.Section("repcollect").Key("count").MustInt(1)
 	config.Timeout = cfgfile.Section("repcollect").Key("timeout").MustInt(5)
 
 	if err := config.validateConfig(configFile); err != nil {
