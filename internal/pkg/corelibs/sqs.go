@@ -9,7 +9,7 @@ import (
 
 // SendToQueue send the metrics information to the SQS Queue URL
 func SendToQueue(metrics []HTTPMetric, queueURL string) error {
-	
+
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
 		SharedConfigState: session.SharedConfigEnable,
 	}))
@@ -20,38 +20,38 @@ func SendToQueue(metrics []HTTPMetric, queueURL string) error {
 		result, err := svc.SendMessage(&sqs.SendMessageInput{
 			DelaySeconds: aws.Int64(10),
 			MessageAttributes: map[string]*sqs.MessageAttributeValue{
-					"target": &sqs.MessageAttributeValue{
-							DataType:    aws.String("String"),
-							StringValue: aws.String(metric.target),
-					},
-					"timestamp": &sqs.MessageAttributeValue{
-						DataType:    aws.String("String"),
-						StringValue: aws.String(metric.timestamp.String()),
-					},
-					"nsLookup": &sqs.MessageAttributeValue{
-							DataType:    aws.String("String"),
-							StringValue: aws.String(metric.nsLookup.String()),
-					},
-					"tcpConnection": &sqs.MessageAttributeValue{
-							DataType:    aws.String("String"),
-							StringValue: aws.String(metric.tcpConnection.String()),
-					},
-					"tlsHandshake": &sqs.MessageAttributeValue{
-						DataType:    aws.String("String"),
-						StringValue: aws.String(metric.tlsHandshake.String()),
-					},
-					"serverProcessing": &sqs.MessageAttributeValue{
-						DataType:    aws.String("String"),
-						StringValue: aws.String(metric.serverProcessing.String()),
-					},
-					"contentTransfer": &sqs.MessageAttributeValue{
-						DataType:    aws.String("String"),
-						StringValue: aws.String(metric.contentTransfer.String()),
-					},
-					"total": &sqs.MessageAttributeValue{
-						DataType:    aws.String("String"),
-						StringValue: aws.String(metric.total.String()),
-					},
+				"target": {
+					DataType:    aws.String("String"),
+					StringValue: aws.String(metric.target),
+				},
+				"timestamp": {
+					DataType:    aws.String("String"),
+					StringValue: aws.String(metric.timestamp.String()),
+				},
+				"nsLookup": {
+					DataType:    aws.String("String"),
+					StringValue: aws.String(metric.nsLookup.String()),
+				},
+				"tcpConnection": {
+					DataType:    aws.String("String"),
+					StringValue: aws.String(metric.tcpConnection.String()),
+				},
+				"tlsHandshake": {
+					DataType:    aws.String("String"),
+					StringValue: aws.String(metric.tlsHandshake.String()),
+				},
+				"serverProcessing": {
+					DataType:    aws.String("String"),
+					StringValue: aws.String(metric.serverProcessing.String()),
+				},
+				"contentTransfer": {
+					DataType:    aws.String("String"),
+					StringValue: aws.String(metric.contentTransfer.String()),
+				},
+				"total": {
+					DataType:    aws.String("String"),
+					StringValue: aws.String(metric.total.String()),
+				},
 			},
 			MessageBody: aws.String("Information about URL response time."),
 			QueueUrl:    &queueURL,
