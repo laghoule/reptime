@@ -50,7 +50,7 @@ func (config *RepcollectConfig) validateConfig(configFile string) error {
 
 	if config.Interval < 1 || config.Count > 60 {
 		return &LoadConfigError{configFile, "repcollect", "interval", "Must be between 1 and 60"}
-	}	
+	}
 
 	if config.Timeout < 1 || config.Count > 30 {
 		return &LoadConfigError{configFile, "repcollect", "count", "Must be between 1 and 30"}
