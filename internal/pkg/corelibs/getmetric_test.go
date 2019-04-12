@@ -9,7 +9,7 @@ func TestGetBobyResponseTime(t *testing.T) {
 	target := "https://www.example.com"
 
 	metric := getBobyResponseTime(target)
-	
+
 	if metric.target != target {
 		t.Errorf("target is %v, want %s", metric.target, target)
 	}
@@ -35,8 +35,8 @@ func TestGetBobyResponseTime(t *testing.T) {
 	}
 
 	total := metric.nsLookup + metric.tcpConnection + metric.tlsHandshake + metric.serverProcessing + metric.contentTransfer
-	if metric.total - total > (time.Duration(1) * time.Millisecond) {
-		t.Errorf("total is %v, want %v (diff is too much: %v)", metric.total, total, metric.total - total)
+	if metric.total-total > (time.Duration(1) * time.Millisecond) {
+		t.Errorf("total is %v, want %v (diff is too much: %v)", metric.total, total, metric.total-total)
 	}
 
 }
