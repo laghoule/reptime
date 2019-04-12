@@ -39,4 +39,8 @@ func TestGetBobyResponseTime(t *testing.T) {
 		t.Errorf("total is %v, want %v (diff is too much: %v)", metric.total, total, metric.total-total)
 	}
 
+	if total > metric.total {
+		t.Errorf("Sum of metric (%v) is > to total (%v)", total, metric.total)
+	}
+
 }
