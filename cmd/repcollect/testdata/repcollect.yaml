@@ -1,0 +1,16 @@
+---
+aws:
+  access_key: myKey
+  secret_key: mySecretKey
+  queue_url: https://myQueueUrl
+  region: myRegion
+
+targets:
+  - url: https://www.example.com
+    count: 1
+    interval: 1
+    timeout: 5
+  - url: https://www.examples.com
+    count: 1
+    interval: 1
+    timeout: 1
