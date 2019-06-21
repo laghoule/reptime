@@ -11,17 +11,18 @@ import (
 
 func main() {
 	var metrics []corelibs.HTTPMetric
+	var config RepcollectConfig
 
 	// cmdline args
-	verbosePtr := flag.Bool("verbose", true, "Enable verbose mode")
-	configFilePtr := flag.String("config", "/etc/reptime/repcollect.conf", "configuration file")
+	verbose := flag.Bool("verbose", true, "Enable verbose mode")
+	configFile := flag.String("config", "/etc/reptime/repcollect.conf", "configuration file")
 	flag.Parse()
 
 	// Call the target and get response time to stdout
-	config := LoadConfig(*configFilePtr)
+	config.LoadConfig(*configFile)
 	for _, target := range config.Targets {
-		metrics = corelibs.GetMetrics(config.Protocol+"://"+target, config.Count, config.Interval, *verbosePtr)
-		corelibs.SendToQueue(metrics, config.QueueURL)
+		metrics = corelibs.GetMetrics(target.URL, target.Count, target.Interval, *verbose)
+		corelibs.SendToQueue(metrics, config.AwsConfig.QueueURL)
 	}
 
 }

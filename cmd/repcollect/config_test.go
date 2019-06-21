@@ -7,23 +7,36 @@ import (
 
 // TestLoadConfig verify the functionality of the LoadConfig() func
 func TestLoadConfig(t *testing.T) {
+	var config RepcollectConfig
 
 	configTemplate := RepcollectConfig{
-		Targets:  []string{"www.example.com", "www.examples.com"},
-		Protocol: "https",
-		Count:    1,
-		Interval: 1,
-		Timeout:  5,
 		AwsConfig: AwsConfig{
-			AccessKey: "mykey",
-			SecretKey: "mysecretkey",
-			Region:    "myregion",
-			QueueURL:  "myqueueurl",
+			AccessKey: "myKey",
+			SecretKey: "mySecretKey",
+			QueueURL:  "https://myQueueUrl",
+			Region:    "myRegion",
+		},
+		Targets: []Targets{
+			{
+				URL:      "https://www.example.com",
+				Count:    1,
+				Interval: 1,
+				Timeout:  5,
+			},
+			{
+				URL:      "https://www.examples.com",
+				Count:    1,
+				Interval: 1,
+				Timeout:  1,
+			},
 		},
 	}
 
 	// Load testdata config
-	config := LoadConfig("testdata/repcollect.conf")
+	err := config.LoadConfig("testdata/repcollect.yaml")
+	if err != nil {
+		t.Errorf("Error loading config file: %v", err)
+	}
 
 	// https://golang.org/pkg/reflect/#DeepEqual
 	if reflect.DeepEqual(config, configTemplate) == false {
